@@ -1,6 +1,6 @@
 #!/bin/bash
 # RPG Game - One-Command Installation & Run Script
-# Works on macOS and Linux
+# Works on macOS and Linux (handles virtual environments automatically)
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -12,6 +12,12 @@ echo -e "${BLUE}=====================================${NC}"
 echo -e "${BLUE}  RPG Game - Installation Script${NC}"
 echo -e "${BLUE}=====================================${NC}\n"
 
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR" || exit
+
+echo -e "${YELLOW}Current directory: $SCRIPT_DIR${NC}\n"
+
 # Check if Python is installed
 echo -e "${YELLOW}Checking for Python...${NC}"
 if ! command -v python3 &> /dev/null; then
@@ -22,16 +28,31 @@ if ! command -v python3 &> /dev/null; then
     elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
         # Linux
         sudo apt update
-        sudo apt install -y python3 python3-pip
+        sudo apt install -y python3 python3-pip python3-venv
     fi
 else
     PYTHON_VERSION=$(python3 --version 2>&1 | awk '{print $2}')
     echo -e "${GREEN}✓ Python $PYTHON_VERSION found${NC}\n"
 fi
 
+# Check if virtual environment exists
+if [ ! -d "venv" ]; then
+    echo -e "${YELLOW}Creating virtual environment...${NC}"
+    python3 -m venv venv
+    echo -e "${GREEN}✓ Virtual environment created${NC}\n"
+else
+    echo -e "${GREEN}✓ Virtual environment already exists${NC}\n"
+fi
+
+# Activate virtual environment
+echo -e "${YELLOW}Activating virtual environment...${NC}"
+source venv/bin/activate
+echo -e "${GREEN}✓ Virtual environment activated${NC}\n"
+
 # Install dependencies
 echo -e "${YELLOW}Installing dependencies...${NC}"
-pip3 install -r requirements.txt
+pip install --upgrade pip > /dev/null 2>&1
+pip install -r requirements.txt
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Dependencies installed successfully${NC}\n"
@@ -44,7 +65,8 @@ echo -e "${GREEN}=====================================${NC}"
 echo -e "${GREEN}  Launching RPG Game...${NC}"
 echo -e "${GREEN}=====================================${NC}\n"
 
-python3 game.py
+python game.py
 
-# Cleanup on exit
+# Cleanup
 echo -e "\n${BLUE}Thanks for playing!${NC}"
+echo -e "${YELLOW}Virtual environment is still active. Type 'deactivate' to exit it.${NC}"
