@@ -42,9 +42,9 @@ elif attack == "pu":
     print("Enemy Punched!")
     print(f"You have done {damage_punch} damage and the enemy has {enemy_health} health left.")
 
+while player_health > 0 and enemy_health > 0:
 #Enemy Attacks
-# Enemy Attacks
-if enemy_health > 0:
+  if enemy_health > 0:
     print("Enemy is choosing an attack...")
     time.sleep(5)
 
@@ -67,17 +67,16 @@ if enemy_health > 0:
     print(f"You have {player_health} health left.")
 
 # Check if player died
-if player_health <= 0:
+  if player_health <= 0:
     print("You have been defeated!")
 
-else:
+  else:
     heal = "n"
     star = "n"
 
     # Potion
     if health_pots > 0:
         heal = input(
-            f"You have {player_health} health left. "
             f"Would you like to use your health potion? (y/n) "
         ).lower()
 
@@ -141,5 +140,6 @@ else:
         print(f"Enemy has {enemy_health} health left.")
 
 # Win condition
-if enemy_health <= 0:
+  if enemy_health <= 0:
     print("Enemy Has Been Defeated!")
+
